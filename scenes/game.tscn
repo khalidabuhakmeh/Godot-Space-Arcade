@@ -1,0 +1,176 @@
+[gd_scene load_steps=18 format=3 uid="uid://b00kx4xrbo0su"]
+
+[ext_resource type="Shader" path="res://shaders/space.gdshader" id="1_rj1hr"]
+[ext_resource type="Texture2D" uid="uid://dulqs67cyvdl1" path="res://assets/star_medium.png" id="2_bm26j"]
+[ext_resource type="Texture2D" uid="uid://nmjshvxgpbb8" path="res://assets/star_tiny.png" id="3_pyc46"]
+[ext_resource type="Script" path="res://scripts/spawn.gd" id="4_sq5pn"]
+[ext_resource type="Script" path="res://scripts/gameover.gd" id="4_t8nkh"]
+[ext_resource type="Script" path="res://scripts/score.gd" id="5_ka3cn"]
+[ext_resource type="PackedScene" uid="uid://mm3k4tc6jtqk" path="res://scenes/Explosion.tscn" id="5_o8p7u"]
+[ext_resource type="Texture2D" uid="uid://wxgg20fnm25t" path="res://assets/enemy_A.png" id="7_5agby"]
+[ext_resource type="Texture2D" uid="uid://mb8pbstk3xgm" path="res://assets/enemy_B.png" id="8_e7jvd"]
+[ext_resource type="PackedScene" uid="uid://c3vbwiqoswpbv" path="res://scenes/player.tscn" id="8_re8dk"]
+[ext_resource type="Texture2D" uid="uid://ddecqmo756g5u" path="res://assets/enemy_C.png" id="9_x5ybx"]
+[ext_resource type="Texture2D" uid="uid://ctxptif5yivku" path="res://assets/station_C.png" id="10_b54ch"]
+[ext_resource type="Texture2D" uid="uid://ct7624m5gmlbn" path="res://assets/enemy_E.png" id="10_nk1qf"]
+[ext_resource type="Script" path="res://scripts/explosions.gd" id="12_85x8p"]
+[ext_resource type="PackedScene" uid="uid://b4mm6uda1v36l" path="res://scenes/Explosion2.tscn" id="13_ihggk"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_phq7t"]
+shader = ExtResource("1_rj1hr")
+shader_parameter/dimensions = Vector2(1024, 600)
+shader_parameter/small_stars = 50.0
+shader_parameter/small_stars_far_size = 0.5
+shader_parameter/small_stars_near_size = 0.1
+shader_parameter/large_stars = 30.0
+shader_parameter/large_stars_far_size = 0.9
+shader_parameter/large_stars_near_size = 0.5
+shader_parameter/far_stars_color = Color(0.501961, 0, 1, 0.388235)
+shader_parameter/near_stars_color = Color(1, 1, 1, 1)
+shader_parameter/base_scroll_speed = 0.1
+shader_parameter/additional_scroll_speed = 0.12
+shader_parameter/small_stars_texture = ExtResource("3_pyc46")
+shader_parameter/large_stars_texture = ExtResource("2_bm26j")
+
+[sub_resource type="Curve2D" id="Curve2D_ixrwp"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 952, -23, 0, 0, 0, 0, 952, 1195)
+}
+point_count = 2
+
+[node name="Game" type="Node2D"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+light_mask = 0
+material = SubResource("ShaderMaterial_phq7t")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 6.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
+offset_left = 16.0
+offset_top = 15.0
+offset_right = 2291.0
+offset_bottom = 1272.0
+size_flags_horizontal = 3
+metadata/_edit_lock_ = true
+
+[node name="Score" type="Label" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 32
+text = "Score: "
+script = ExtResource("5_ka3cn")
+prefix = "Score: "
+
+[node name="Game Over" type="Control" parent="CanvasLayer" groups=["game_over"]]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("4_t8nkh")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Game Over"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1022.0
+offset_top = -483.5
+offset_right = 1022.0
+offset_bottom = 483.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="GameOverText" type="RichTextLabel" parent="CanvasLayer/Game Over/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_font_sizes/normal_font_size = 300
+bbcode_enabled = true
+text = "[center][wave][rainbow]Game Over"
+fit_content = true
+
+[node name="FinalScore" type="Label" parent="CanvasLayer/Game Over/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+size_flags_stretch_ratio = 0.74
+theme_override_font_sizes/font_size = 75
+text = "Final Score"
+horizontal_alignment = 1
+script = ExtResource("5_ka3cn")
+prefix = "Final Score is "
+
+[node name="Button" type="Button" parent="CanvasLayer/Game Over/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 2
+theme_override_font_sizes/font_size = 100
+text = "Restart"
+
+[node name="Enemy Path" type="Path2D" parent="CanvasLayer" node_paths=PackedStringArray("player_target")]
+position = Vector2(1637, 61)
+curve = SubResource("Curve2D_ixrwp")
+script = ExtResource("4_sq5pn")
+spawnpoint_speed = 400
+enemy_speed = 400
+player_target = NodePath("../Player")
+horizontal_spacing = 125
+max_enemies_per_row = 4
+enemy_textures = Array[Texture2D]([ExtResource("7_5agby"), ExtResource("8_e7jvd"), ExtResource("9_x5ybx"), ExtResource("10_nk1qf")])
+metadata/_edit_group_ = true
+
+[node name="PathFollow2D" type="PathFollow2D" parent="CanvasLayer/Enemy Path"]
+position = Vector2(952, -23)
+rotation = 1.5708
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/Enemy Path/PathFollow2D"]
+rotation = -1.5708
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("10_b54ch")
+
+[node name="Timer" type="Timer" parent="CanvasLayer/Enemy Path"]
+autostart = true
+
+[node name="Player" parent="CanvasLayer" instance=ExtResource("8_re8dk")]
+position = Vector2(401, 730)
+SPEED = 1000.0
+BOOST_SPEED = 2500.0
+BOOST_TIMER = 0.3
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="Explosions" type="Node2D" parent="."]
+editor_description = "This is here to get rid of an initial stutter the first time the explosion enters the game. It explodes off screen so explosions are smooth."
+visible = false
+position = Vector2(2867, 627)
+script = ExtResource("12_85x8p")
+metadata/_edit_group_ = true
+
+[node name="_Explosion_1" parent="Explosions" instance=ExtResource("5_o8p7u")]
+
+[node name="_Explosion_2" parent="Explosions" instance=ExtResource("13_ihggk")]
+
+[connection signal="pressed" from="CanvasLayer/Game Over/VBoxContainer/Button" to="CanvasLayer/Game Over" method="_on_button_pressed"]
+[connection signal="timeout" from="CanvasLayer/Enemy Path/Timer" to="CanvasLayer/Enemy Path" method="_spawn_enemy"]
